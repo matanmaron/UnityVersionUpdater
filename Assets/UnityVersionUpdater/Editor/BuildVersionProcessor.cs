@@ -3,33 +3,35 @@ using UnityEditor;
 using System;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Build;
-
-public class BuildVersionProcessor : IPreprocessBuildWithReport
+namespace MaronByteStudio.UnityVersionUpdater
 {
-    public int callbackOrder => 0;
-    private const string initialVersion = "0.0";
-
-    public void OnPreprocessBuild(BuildReport report)
+    public class BuildVersionProcessor : IPreprocessBuildWithReport
     {
-        string currentVersion = FindCurrentVersion();
-        UpdateVersion(currentVersion);
-    }
+        public int callbackOrder => 0;
+        private const string initialVersion = "0.0";
 
-    private string FindCurrentVersion()
-    {
-        string[] currentVersion = PlayerSettings.bundleVersion.Split('[', ']');
-        return currentVersion.Length == 1 ? initialVersion : currentVersion[1];
-    }
-
-    private void UpdateVersion(string version)
-    {
-        if (float.TryParse(version, out float versionNumber))
+        public void OnPreprocessBuild(BuildReport report)
         {
-            float newVersion = versionNumber + 0.001f;
-            string date = DateTime.Now.ToString("d");
+            string currentVersion = FindCurrentVersion();
+            UpdateVersion(currentVersion);
+        }
 
-            PlayerSettings.bundleVersion = string.Format($"Version [{newVersion}] - {date}");
-            Debug.Log(PlayerSettings.bundleVersion);
+        private string FindCurrentVersion()
+        {
+            string[] currentVersion = PlayerSettings.bundleVersion.Split('[', ']');
+            return currentVersion.Length == 1 ? initialVersion : currentVersion[1];
+        }
+
+        private void UpdateVersion(string version)
+        {
+            if (float.TryParse(version, out float versionNumber))
+            {
+                float newVersion = versionNumber + 0.001f;
+                string date = DateTime.Now.ToString("d");
+
+                PlayerSettings.bundleVersion = string.Format($"Version [{newVersion}] - {date}");
+                Debug.Log(PlayerSettings.bundleVersion);
+            }
         }
     }
 }
